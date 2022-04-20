@@ -1,9 +1,7 @@
 package ru.pet.tasklist.backendspringboot.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.pet.tasklist.backendspringboot.entity.Priority;
 import ru.pet.tasklist.backendspringboot.repository.PriorityRepository;
 
@@ -23,5 +21,10 @@ public class PriorityController {
     public List<Priority> test(){
         List<Priority> list = priorityRepository.findAll();
         return list;
+    }
+
+    @PostMapping("/add")
+    public Priority add(@RequestBody Priority priority){
+        return priorityRepository.save(priority);
     }
 }

@@ -1,6 +1,7 @@
 package ru.pet.tasklist.backendspringboot.controller;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pet.tasklist.backendspringboot.entity.Priority;
 import ru.pet.tasklist.backendspringboot.repository.PriorityRepository;
@@ -24,7 +25,30 @@ public class PriorityController {
     }
 
     @PostMapping("/add")
-    public Priority add(@RequestBody Priority priority){
-        return priorityRepository.save(priority);
+    public ResponseEntity<Priority> add(@RequestBody Priority priority){
+        if(priority.getId() != null && priority.getId() != 0){
+            return new ResponseEntity("redundant param: id must be null", HttpStatus.NOT_ACCEPTABLE);
+        }
+        if(priority.getTitle() == null || priority.getTitle().trim().length() == 0){
+            return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
+        }
+        if(priority.getColor() == null || priority.getColor().trim().length() == 0){
+            return new ResponseEntity("missed param: color", HttpStatus.NOT_ACCEPTABLE);
+        }
+        return ResponseEntity.ok(priorityRepository.save(priority));
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity update(@RequestBody Priority priority){
+        if(priority.getId() == null || priority.getId() == 0){
+            return new ResponseEntity("missed param: id", HttpStatus.NOT_ACCEPTABLE);
+        }
+        if(priority.getTitle() == null || priority.getTitle().trim().length() == 0){
+            return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
+        }
+        if(priority.getColor() == null || priority.getColor().trim().length() == 0){
+            return new ResponseEntity("missed param: color", HttpStatus.NOT_ACCEPTABLE);
+        }
+        return ResponseEntity.ok(priorityRepository.save(priority));
     }
 }

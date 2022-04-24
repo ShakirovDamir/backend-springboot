@@ -1,13 +1,14 @@
 package ru.pet.tasklist.backendspringboot.controller;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pet.tasklist.backendspringboot.entity.Category;
-import ru.pet.tasklist.backendspringboot.entity.Priority;
 import ru.pet.tasklist.backendspringboot.repository.CategoryRepository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/category")
@@ -45,5 +46,28 @@ public class CategoryController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
         return ResponseEntity.ok(categoryRepository.save(category));
+    }
+
+    @GetMapping("id/{id}")
+    public ResponseEntity<Category> findById(@PathVariable Long id){
+        Category category = null;
+        try{
+            category = categoryRepository.findById(id).get();
+        } catch (NoSuchElementException e){
+            e.printStackTrace();
+            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+        return ResponseEntity.ok(category);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable Long id){
+        try{
+            categoryRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e){
+            e.printStackTrace();
+            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
